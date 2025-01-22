@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messenger - Foto Fanantenana</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #000;
+            color: #fff;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .container {
+            width: 80%;
+            height: 80%;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            background: #333;
+        }
+
+        header {
+            background: linear-gradient(45deg, #ffd700, #ffcc00);
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        header h1 {
+            font-size: 3rem;
+            color: #fff;
+            text-shadow: 2px 2px 10px rgba(255, 215, 0, 0.7);
+        }
+
+        .chat-box {
+            padding: 20px;
+            height: calc(100% - 70px);
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .message-list {
+            position: relative;
+            z-index: 1;
+            max-height: 100%;
+            overflow-y: scroll;
+        }
+
+        .message {
+            background: #ffd700;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(255, 215, 0, 0.6);
+            transform: scale(0.8);
+            animation: appear 0.5s ease-out forwards;
+        }
+
+        .message.user {
+            background: #3b3b3b;
+            box-shadow: 0 10px 20px rgba(59, 59, 59, 0.6);
+            transform: scale(0.8);
+            text-align: right;
+        }
+
+        .message.bot {
+            background: #ffcc00;
+            transform: scale(0.8);
+        }
+
+        @keyframes appear {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .emoji {
+            font-size: 30px;
+            cursor: pointer;
+            margin: 0 5px;
+        }
+
+        #message-input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            margin-top: 10px;
+            resize: none;
+            background: #444;
+            color: #fff;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        button {
+            background: #ffd700;
+            color: #fff;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.5);
+            transition: 0.3s ease-in-out;
+        }
+
+        button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 20px 40px rgba(255, 215, 0, 0.8);
+        }
+
+        /* Parallax Background */
+        .background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://www.w3schools.com/w3images/forest.jpg') no-repeat center center fixed;
+            background-size: cover;
+            filter: blur(8px);
+            z-index: -1;
+            animation: parallax 30s infinite linear;
+        }
+
+        @keyframes parallax {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="background"></div>
+
+    <div class="container">
+        <header>
+            <h1>Messenger</h1>
+        </header>
+        <div class="chat-box">
+            <div class="message-list" id="message-list"></div>
+            <textarea id="message-input" placeholder="Écrivez un message..."></textarea>
+            <div class="emoji" onclick="sendEmoji()">💬</div>
+            <button onclick="sendMessage()">Envoyer</button>
+        </div>
+    </div>
+
+    <script>
+        const sendMessageSound = new Audio('https://www.soundjay.com/button/beep-07.wav');
+
+        function sendMessage() {
+            const messageInput = document.getElementById('message-input');
+            const messageList = document.getElementById('message-list');
+
+            if (messageInput.value.trim() !== "") {
+                const message = document.createElement('div');
+                message.classList.add('message', 'user');
+                message.textContent = messageInput.value;
+                messageList.appendChild(message);
+
+                // Effet sonore magique
+                sendMessageSound.play();
+
+                // Animation 3D pour les messages
+                message.style.animation = 'appear 0.5s ease-out forwards';
+
+                // Scroll automatique vers le bas
+                messageList.scrollTop = messageList.scrollHeight;
+
+                // Réinitialisation de la zone de texte
+                messageInput.value = '';
+            }
+        }
+
+        function sendEmoji() {
+            const emojiList = ['😊', '❤️', '🔥', '😂'];
+            const randomEmoji = emojiList[Math.floor(Math.random() * emojiList.length)];
+            const messageList = document.getElementById('message-list');
+
+            const emojiMessage = document.createElement('div');
+            emojiMessage.classList.add('message', 'bot');
+            emojiMessage.textContent = randomEmoji;
+            messageList.appendChild(emojiMessage);
+
+            // Animation 3D pour l'emoji
+            emojiMessage.style.animation = 'appear 0.5s ease-out forwards';
+            sendMessageSound.play();
+        }
+
+        // Option pour envoyer par 'Enter'
+        document.getElementById('message-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
